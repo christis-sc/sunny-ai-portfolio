@@ -306,9 +306,7 @@ export default function Chatbot() {
           </button>
         </div>
 
-        <div className="muted" style={{ marginTop: 10, fontWeight: 800 }}>
-          Tip: This bot uses a secure server endpoint, so your API key stays private.
-        </div>
+        
       </div>
     </div>
   );
