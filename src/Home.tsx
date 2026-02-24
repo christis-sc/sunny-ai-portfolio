@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const projects = [
   {
     title: "AI Portfolio Assistant",
@@ -45,7 +47,9 @@ export default function Home() {
             </p>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-              <a className="btn-primary" href="/chat">Open AI Assistant</a>
+              <Link to="/chat" className="btn-primary">
+  Open AI Assistant
+</Link>
               <a className="btn-ghost" href="#projects">See Projects</a>
             </div>
 
