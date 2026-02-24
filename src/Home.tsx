@@ -1,23 +1,31 @@
 const projects = [
   {
-    title: "AI Chatbot Portfolio",
-    desc: "Interactive chatbot that answers questions about my skills, projects, and contact info.",
-    tags: ["React", "TypeScript", "AI"],
+    title: "AI Portfolio Assistant",
+    subtitle: "Interactive chatbot that answers questions about my background",
+    impact: "Improves engagement by letting visitors explore my profile through chat",
+    stack: ["React", "TypeScript", "Vercel", "AI Logic"],
+    features: ["Intent detection", "Quick actions", "Mobile-friendly UI"],
   },
   {
     title: "Donut Shop Calculator",
-    desc: "React app that calculates totals, tax, and order summary with a clean UI.",
-    tags: ["React", "UI"],
+    subtitle: "Order calculator with totals, tax, and summary",
+    impact: "Demonstrates clean UI + state management in React",
+    stack: ["React", "Vite", "CSS"],
+    features: ["Live totals", "Validation", "Responsive layout"],
   },
   {
     title: "Car/Bike Marketplace",
-    desc: "Marketplace-style app for browsing listings and details.",
-    tags: ["Web App", "CRUD"],
+    subtitle: "Marketplace-style browsing experience",
+    impact: "Shows multi-page navigation and data-driven UI design",
+    stack: ["Web App", "CRUD", "UI"],
+    features: ["Listing view", "Details page", "Filtering (basic)"],
   },
   {
     title: "PHP Login System",
-    desc: "Login/Register/Forgot Password authentication flow.",
-    tags: ["PHP", "Auth"],
+    subtitle: "Authentication flow: login, register, forgot password",
+    impact: "Demonstrates understanding of auth and form handling",
+    stack: ["PHP", "Forms", "Sessions"],
+    features: ["Register/Login", "Error handling", "Password flow"],
   },
 ];
 
@@ -37,15 +45,15 @@ export default function Home() {
             </p>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-              <a className="btn-primary" href="/chat">Try the AI Chatbot</a>
-              <a className="btn-ghost" href="#projects">View Projects</a>
+              <a className="btn-primary" href="/chat">Open AI Assistant</a>
+              <a className="btn-ghost" href="#projects">See Projects</a>
             </div>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
               <span className="badge">React</span>
               <span className="badge">TypeScript</span>
-              <span className="badge">Vercel Deploy</span>
               <span className="badge">AI Chatbot</span>
+              <span className="badge">Vercel Deploy</span>
             </div>
           </div>
 
@@ -63,7 +71,6 @@ export default function Home() {
                 fontWeight: 950,
                 letterSpacing: 1,
               }}
-              aria-label="Profile badge"
             >
               SC
             </div>
@@ -78,12 +85,15 @@ export default function Home() {
         `}</style>
       </div>
 
-      {/* Projects */}
+      {/* Projects (realistic case-study cards) */}
       <div id="projects" style={{ marginTop: 16 }} className="glass">
         <div style={{ padding: 18 }}>
-          <div className="section-title">Projects</div>
+          <div className="section-title">Featured Projects</div>
+          <p className="muted" style={{ marginTop: 6 }}>
+            Each project below includes the goal, the tech stack, and key features.
+          </p>
 
-          <div className="grid">
+          <div className="grid" style={{ marginTop: 10 }}>
             {projects.map((p) => (
               <div
                 key={p.title}
@@ -92,20 +102,35 @@ export default function Home() {
                   gridColumn: "span 6",
                   padding: 16,
                   background: "rgba(255,255,255,0.06)",
-                  transition: "transform .12s ease",
                 }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.transform = "translateY(0px)")}
               >
                 <div style={{ fontWeight: 950, fontSize: 16 }}>{p.title}</div>
-                <p className="muted" style={{ margin: "8px 0 10px", lineHeight: 1.55 }}>
-                  {p.desc}
-                </p>
+                <div className="muted" style={{ marginTop: 6 }}>{p.subtitle}</div>
 
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {p.tags.map((t) => (
-                    <span className="badge" key={t}>{t}</span>
-                  ))}
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontWeight: 900, marginBottom: 6 }}>Why it matters</div>
+                  <div className="muted" style={{ lineHeight: 1.55 }}>{p.impact}</div>
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontWeight: 900, marginBottom: 6 }}>Tech Stack</div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {p.stack.map((t) => <span className="badge" key={t}>{t}</span>)}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontWeight: 900, marginBottom: 6 }}>Key Features</div>
+                  <ul className="muted" style={{ margin: 0, paddingLeft: 18, lineHeight: 1.6 }}>
+                    {p.features.map((f) => <li key={f}>{f}</li>)}
+                  </ul>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+                  <a className="btn-ghost" href="/chat">Demo</a>
+                  <a className="btn-ghost" href="https://github.com/christis-sc/sunny-ai-portfolio" target="_blank" rel="noreferrer">
+                    GitHub
+                  </a>
                 </div>
               </div>
             ))}
