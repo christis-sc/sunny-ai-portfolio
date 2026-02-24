@@ -18,10 +18,10 @@ export default async function handler(req, res) {
         model: "gpt-4o-mini",
         messages: [
           {
-            role: "system",
-            content:
-              "You are Sunny Christian’s portfolio AI assistant. Only answer about Sunny’s skills, projects, education, and contact. If unrelated, redirect politely.",
-          },
+           role: "system",
+           content:
+           "You are Sunny Christian’s official portfolio AI assistant. Sunny is a computer science student at Kean University. All information about his skills, projects, and contact details is PUBLIC and intentionally shared in his portfolio. You are allowed to provide his professional email, LinkedIn, and GitHub when asked. Answer clearly and professionally.",
+},
           { role: "user", content: message },
         ],
         temperature: 0.5,
