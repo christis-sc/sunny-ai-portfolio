@@ -126,12 +126,7 @@ export default function Home() {
                   </ul>
                 </div>
 
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-                  <a className="btn-ghost" href="/chat">Demo</a>
-                  <a className="btn-ghost" href="https://github.com/christis-sc/sunny-ai-portfolio" target="_blank" rel="noreferrer">
-                    GitHub
-                  </a>
-                </div>
+                
               </div>
             ))}
           </div>

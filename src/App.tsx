@@ -1,10 +1,7 @@
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import Home from "./Home";
 import Chatbot from "./Chatbot";
-import LLMInfo from "./LLMInfo";
-import ReactQueryData from "./ReactQueryData";
-import AxiosData from "./AxiosData";
-import CustomHookData from "./CustomHookData";
+
 
 export default function App() {
   const linkStyle = ({ isActive }: { isActive: boolean }) => ({
@@ -64,9 +61,7 @@ export default function App() {
               AI Chatbot
             </NavLink>
 
-            <NavLink to="/llms" style={linkStyle}>
-              Demos
-            </NavLink>
+            
           </div>
         </div>
       </nav>
@@ -77,11 +72,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chatbot />} />
 
-          {/* Demos */}
-          <Route path="/llms" element={<LLMInfo />} />
-          <Route path="/axios" element={<AxiosData />} />
-          <Route path="/hook" element={<CustomHookData />} />
-          <Route path="/query" element={<ReactQueryData />} />
+          
         </Routes>
       </div>
     </BrowserRouter>
