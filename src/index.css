@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #243b55, #141e30);
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+input.browser-default {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Placeholder color */
+input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+a {
+  color: inherit;
+}
+
+nav .brand-logo {
+  font-size: 1.6rem;
+}
+
+nav ul a {
+  font-weight: 700;
+}
