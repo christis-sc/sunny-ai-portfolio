@@ -208,9 +208,7 @@ export default function Chatbot() {
         </button>
       </div>
 
-      <p style={{ marginTop: 10, opacity: 0.75 }}>
-        Note: This chatbot runs fully in the browser so it works on Vercel without a backend.
-      </p>
+     
     </div>
   );
 }
