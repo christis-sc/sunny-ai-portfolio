@@ -4,12 +4,21 @@ export default function Home() {
     borderRadius: 12,
     marginTop: 16,
     backgroundColor: "white",
-    color: "#111", // ✅ makes text visible on white cards
+    color: "#111",
   };
 
   return (
     <div className="container" style={{ maxWidth: 950 }}>
-      <h3 style={{ fontWeight: 900, marginTop: 18 }}>Sunny Christian</h3>
+      <h3
+        style={{
+          fontWeight: 900,
+          marginTop: 18,
+          fontSize: "clamp(28px, 6vw, 48px)",
+        }}
+      >
+        Sunny Christian
+      </h3>
+
       <p style={{ fontSize: 18, opacity: 0.9 }}>
         Computer Science Student | React Developer | AI-Enhanced Portfolio
       </p>
@@ -26,10 +35,18 @@ export default function Home() {
       <div id="projects" className="card" style={cardStyle}>
         <h5 style={{ marginTop: 0, fontWeight: 800 }}>Projects</h5>
         <ul style={{ marginTop: 8 }}>
-          <li><b>AI Chatbot Portfolio</b> — React chatbot assistant that answers questions about me.</li>
-          <li><b>Donut Shop Calculator</b> — React app for totals, tax, and order summary.</li>
-          <li><b>Car/Bike Marketplace</b> — multi-page marketplace with listings.</li>
-          <li><b>PHP Login System</b> — login/register/forgot-password flow.</li>
+          <li>
+            <b>AI Chatbot Portfolio</b> — React chatbot assistant that answers questions about me.
+          </li>
+          <li>
+            <b>Donut Shop Calculator</b> — React app for totals, tax, and order summary.
+          </li>
+          <li>
+            <b>Car/Bike Marketplace</b> — multi-page marketplace with listings.
+          </li>
+          <li>
+            <b>PHP Login System</b> — login/register/forgot-password flow.
+          </li>
         </ul>
       </div>
 
@@ -42,8 +59,19 @@ export default function Home() {
 
       <div id="contact" className="card" style={cardStyle}>
         <h5 style={{ marginTop: 0, fontWeight: 800 }}>Contact</h5>
-        <p><b>Email:</b> christis@kean.edu</p>
-        <p><b>LinkedIn:</b> https://www.linkedin.com/in/sunny-christian-3a3366188</p>
+        <p>
+          <b>Email:</b> christis@kean.edu
+        </p>
+        <p>
+          <b>LinkedIn:</b>{" "}
+          <a
+            href="https://www.linkedin.com/in/sunny-christian-3a3366188"
+            target="_blank"
+            rel="noreferrer"
+          >
+            linkedin.com/in/sunny-christian-3a3366188
+          </a>
+        </p>
       </div>
 
       <p style={{ marginTop: 14, opacity: 0.8 }}>
