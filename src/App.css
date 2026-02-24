@@ -40,3 +40,36 @@
 .read-the-docs {
   color: #888;
 }
+
+
+.nav-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+
+@media (max-width: 600px) {
+  nav .brand-logo {
+    position: static !important;
+    transform: none !important;
+    font-size: 1.4rem !important;
+    line-height: 1.6rem !important;
+    padding: 10px 0 !important;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    padding-bottom: 10px;
+  }
+}

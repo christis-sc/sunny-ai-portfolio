@@ -15,12 +15,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <nav className="blue-grey darken-4">
-        <div className="nav-wrapper container">
+        <div className="nav-wrapper container nav-flex">
           <NavLink to="/" className="brand-logo" style={{ fontWeight: 900 }}>
             Sunny’s Portfolio
           </NavLink>
 
-          <ul className="right">
+          <ul className="right nav-links">
             <li><NavLink to="/" style={linkStyle}>Home</NavLink></li>
             <li><NavLink to="/chat" style={linkStyle}>AI Chatbot</NavLink></li>
 
