@@ -6,58 +6,51 @@ export default async function handler(req, res) {
     if (!message) return res.status(400).json({ error: "Missing message" });
 
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
+    if (!apiKey) return res.status(500).json({ error: "OPENAI_API_KEY missing on Vercel" });
 
-    const system = `
-You are Sunny Christian's portfolio assistant.
-Only answer questions about Sunny, his skills, projects, and contact info.
-If the user asks something unrelated, redirect them politely to Sunny's portfolio.
-Keep answers helpful, natural, and concise.
-`;
-
-    const context = `
-PROFILE:
-Name: Sunny Christian
-School: Kean University
-Role: Computer Science student & developer
-Skills: JavaScript, TypeScript, React, Vite, Node.js, HTML/CSS, Git/GitHub, APIs, AI Integration
-Projects:
-1) AI Portfolio Assistant
-2) Donut Shop Calculator
-3) Car/Bike Marketplace
-4) PHP Login System
-Contact:
-Email: christis@kean.edu
-LinkedIn: https://www.linkedin.com/in/sunny-christian-3a3366188
-GitHub: https://github.com/christis-sc/sunny-ai-portfolio
-`;
-
-    const r = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
-        input: [
-          { role: "system", content: system },
-          { role: "user", content: `${context}\n\nUSER: ${message}` },
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are Sunny Christian’s portfolio AI assistant. Only answer about Sunny’s skills, projects, education, and contact. If unrelated, redirect politely.",
+          },
+          { role: "user", content: message },
         ],
-        max_output_tokens: 220,
+        temperature: 0.5,
+        max_tokens: 250,
       }),
     });
 
-    const data = await r.json();
+    const data = await response.json();
 
-    if (!r.ok) {
-      return res.status(500).json({
+    // IMPORTANT: If OpenAI fails, return the real error
+    if (!response.ok) {
+      return res.status(response.status).json({
         error: data?.error?.message || "OpenAI request failed",
+        details: data,
       });
     }
 
-    return res.json({ reply: data.output_text || "No response." });
-  } catch (e) {
-    return res.status(500).json({ error: "Server error" });
+    const reply = data?.choices?.[0]?.message?.content?.trim();
+
+    // If reply is missing, return full payload so we can debug
+    if (!reply) {
+      return res.status(500).json({
+        error: "OpenAI returned no text (choices missing).",
+        details: data,
+      });
+    }
+
+    return res.status(200).json({ reply });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error", details: String(err) });
   }
 }
