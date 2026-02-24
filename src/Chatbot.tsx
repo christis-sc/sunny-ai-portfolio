@@ -1,171 +1,51 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Role = "user" | "bot";
-type Msg = { role: Role; text: string };
+type Msg = { id: string; role: Role; text: string; time: string };
 
-type Topic = "about" | "skills" | "projects" | "contact" | "unknown";
+function nowTime() {
+  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
 
-const PROFILE = {
-  name: "Sunny Christian",
-  role: "Computer Science student & developer",
-  school: "Kean University",
-  focus: "building modern web applications with React and AI-enhanced features",
-  skills: [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Vite",
-    "Node.js",
-    "HTML/CSS",
-    "Git/GitHub",
-    "APIs",
-    "AI Integration",
-  ],
-  projects: [
-    {
-      title: "AI Portfolio Assistant",
-      desc: "An AI-style portfolio chatbot that answers questions about Sunny’s skills, projects, and contact details.",
-      highlights: ["Intent detection", "Quick actions", "Responsive UI"],
-    },
-    {
-      title: "Donut Shop Calculator",
-      desc: "React app that calculates totals, tax, and order summary with clean UI and validation.",
-      highlights: ["State management", "UI/UX", "Responsive layout"],
-    },
-    {
-      title: "Car/Bike Marketplace",
-      desc: "Marketplace-style browsing experience with listings and details flow.",
-      highlights: ["Navigation", "Data-driven UI", "Multi-page structure"],
-    },
-    {
-      title: "PHP Login System",
-      desc: "Authentication flow with login, register, and forgot-password features.",
-      highlights: ["Form handling", "Error handling", "Auth flow"],
-    },
-  ],
-  contact: {
-    email: "christis@kean.edu",
-    linkedin: "https://www.linkedin.com/in/sunny-christian-3a3366188",
-    github: "https://github.com/christis-sc/sunny-ai-portfolio",
-  },
-};
-
-function classify(text: string): Topic {
-  const msg = text.toLowerCase();
-
-  const greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"];
-  if (greetings.some((w) => msg.includes(w))) return "about";
-
-  if (
-    msg.includes("who are you") ||
-    msg.includes("who is sunny") ||
-    msg.includes("about") ||
-    msg.includes("introduce") ||
-    msg.includes("background")
-  )
-    return "about";
-
-  if (
-    msg.includes("skill") ||
-    msg.includes("stack") ||
-    msg.includes("tech") ||
-    msg.includes("language") ||
-    msg.includes("framework")
-  )
-    return "skills";
-
-  if (
-    msg.includes("project") ||
-    msg.includes("portfolio") ||
-    msg.includes("built") ||
-    msg.includes("apps") ||
-    msg.includes("work")
-  )
-    return "projects";
-
-  if (
-    msg.includes("contact") ||
-    msg.includes("email") ||
-    msg.includes("linkedin") ||
-    msg.includes("github") ||
-    msg.includes("reach")
-  )
-    return "contact";
-
-  return "unknown";
+function uid() {
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
 
 function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function renderAbout(): string {
-  return (
-    `${PROFILE.name} is a ${PROFILE.role} at ${PROFILE.school}. ` +
-    `He focuses on ${PROFILE.focus}.\n\n` +
-    `You can ask me about:\n` +
-    `• Skills\n` +
-    `• Projects\n` +
-    `• Contact info`
-  );
-}
-
-function renderSkills(): string {
-  return (
-    `Here are Sunny’s core skills:\n` +
-    `• ${PROFILE.skills.join("\n• ")}\n\n` +
-    `Want me to list projects that use React/TypeScript?`
-  );
-}
-
-function renderProjects(): string {
-  const list = PROFILE.projects
-    .map(
-      (p) =>
-        `• ${p.title}\n  ${p.desc}\n  Highlights: ${p.highlights.join(", ")}`
-    )
-    .join("\n\n");
-
-  return (
-    `Here are Sunny’s featured projects:\n\n${list}\n\n` +
-    `If you want, tell me which one and I’ll describe what Sunny built and what he learned.`
-  );
-}
-
-function renderContact(): string {
-  return (
-    `You can contact Sunny here:\n` +
-    `• Email: ${PROFILE.contact.email}\n` +
-    `• LinkedIn: ${PROFILE.contact.linkedin}\n` +
-    `• GitHub: ${PROFILE.contact.github}\n\n` +
-    `Do you want the GitHub link or LinkedIn link opened next?`
-  );
-}
-
-function renderFallback(lastTopic: Topic): string {
-  if (lastTopic === "projects") {
-    return `Are you asking about one specific project? Try: “Tell me more about the Donut Shop Calculator.”`;
-  }
-  if (lastTopic === "skills") {
-    return `Are you asking for Sunny’s strongest skills or his full tech stack?`;
-  }
-  return (
-    `I’m Sunny’s portfolio assistant. I can help with:\n` +
-    `• About Sunny\n` +
-    `• Skills\n` +
-    `• Projects\n` +
-    `• Contact\n\n` +
-    `Try: “What are Sunny’s skills?” or “Show Sunny’s projects.”`
-  );
+// Convert URLs in text into clickable links
+function linkify(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: "underline", fontWeight: 900 }}
+        >
+          {part.replace("https://", "").replace("http://", "")}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
 }
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<Msg[]>([
     {
+      id: uid(),
       role: "bot",
+      time: nowTime(),
       text:
-        `Hi! I’m Sunny’s portfolio assistant 🤖\n\n` +
-        `Ask me about Sunny’s skills, projects, or contact info — or tap a quick button below.`,
+        "Hi! I’m Sunny’s AI portfolio assistant 🤖\n\n" +
+        "Ask me about Sunny’s skills, projects, or contact info — or tap a quick prompt below.",
     },
   ]);
 
@@ -173,138 +53,223 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const lastBotTopic = useMemo<Topic>(() => {
-    // Rough memory: infer last topic from the last user message if available
-    const lastUser = [...messages].reverse().find((m) => m.role === "user")?.text;
-    return lastUser ? classify(lastUser) : "about";
-  }, [messages]);
+  const listRef = useRef<HTMLDivElement | null>(null);
 
-  const generateReply = async (userText: string): Promise<string> => {
-    const topic = classify(userText);
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [messages, loading]);
 
-    // small realistic delay
-    await delay(450);
+  const quickPrompts = useMemo(
+    () => [
+      { label: "About Sunny", prompt: "Tell me about Sunny Christian." },
+      { label: "Skills", prompt: "What are Sunny’s main skills?" },
+      { label: "Projects", prompt: "List Sunny’s projects and what he built." },
+      { label: "Contact", prompt: "How can I contact Sunny? Give links." },
+      { label: "Best project", prompt: "Which project best represents Sunny’s skills and why?" },
+    ],
+    []
+  );
 
-    switch (topic) {
-      case "about":
-        return renderAbout();
-      case "skills":
-        return renderSkills();
-      case "projects":
-        return renderProjects();
-      case "contact":
-        return renderContact();
-      default:
-        return renderFallback(lastBotTopic);
+  const fetchAI = async (userMessage: string): Promise<string> => {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userMessage }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      const msg =
+        data?.error ||
+        "AI server error. Check OPENAI_API_KEY in Vercel Environment Variables.";
+      throw new Error(msg);
     }
+
+    return data.reply || "No response.";
   };
 
-  const send = async (textOverride?: string) => {
-    const text = (textOverride ?? input).trim();
+  const send = async (override?: string) => {
+    const text = (override ?? input).trim();
     if (!text || loading) return;
 
     setError("");
-    setMessages((prev) => [...prev, { role: "user", text }]);
     setInput("");
+
+    const userMsg: Msg = { id: uid(), role: "user", text, time: nowTime() };
+    setMessages((prev) => [...prev, userMsg]);
+
     setLoading(true);
 
     try {
-      const reply = await generateReply(text);
-      setMessages((prev) => [...prev, { role: "bot", text: reply }]);
-    } catch (e) {
-      setError("Something went wrong. Please try again.");
-      setMessages((prev) => [...prev, { role: "bot", text: "Sorry — I had an error generating a response." }]);
+      // A tiny delay makes it feel more natural
+      await delay(220);
+
+      const reply = await fetchAI(text);
+
+      const botMsg: Msg = { id: uid(), role: "bot", text: reply, time: nowTime() };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (e: any) {
+      const msg = e?.message || "Could not reach AI server.";
+      setError(msg);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          role: "bot",
+          time: nowTime(),
+          text:
+            "Sorry — I couldn’t generate a response right now.\n\n" +
+            "If this is deployed, make sure your Vercel Environment Variable OPENAI_API_KEY is set and the project is redeployed.",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const QuickBtn = ({ label, prompt }: { label: string; prompt: string }) => (
-    <button
-      onClick={() => send(prompt)}
-      disabled={loading}
-      style={{
-        border: "1px solid rgba(255,255,255,0.18)",
-        background: "rgba(255,255,255,0.06)",
-        color: "white",
-        borderRadius: 999,
-        padding: "8px 12px",
-        fontWeight: 900,
-        cursor: loading ? "not-allowed" : "pointer",
-      }}
-    >
-      {label}
-    </button>
-  );
+  const clearChat = () => {
+    setError("");
+    setInput("");
+    setMessages([
+      {
+        id: uid(),
+        role: "bot",
+        time: nowTime(),
+        text:
+          "Chat cleared ✅\n\nAsk me about Sunny’s skills, projects, or contact info.",
+      },
+    ]);
+  };
+
+  const Bubble = ({ m }: { m: Msg }) => {
+    const isUser = m.role === "user";
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: isUser ? "flex-end" : "flex-start",
+          marginBottom: 10,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "78%",
+            padding: "10px 12px",
+            borderRadius: 16,
+            whiteSpace: "pre-wrap",
+            border: "1px solid rgba(255,255,255,0.14)",
+            background: isUser
+              ? "linear-gradient(135deg, rgba(124,58,237,0.95), rgba(124,58,237,0.55))"
+              : "rgba(255,255,255,0.06)",
+            boxShadow: "0 10px 22px rgba(0,0,0,0.18)",
+          }}
+        >
+          <div style={{ fontSize: 13, opacity: 0.78, marginBottom: 6, fontWeight: 800 }}>
+            {isUser ? "You" : "Assistant"} • {m.time}
+          </div>
+
+          <div style={{ lineHeight: 1.55 }}>{linkify(m.text)}</div>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="container" style={{ padding: "26px 0 40px", maxWidth: 950 }}>
+    <div className="container" style={{ padding: "26px 0 40px", maxWidth: 980 }}>
       <div className="glass" style={{ padding: 18 }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(20px, 3.5vw, 28px)", fontWeight: 950 }}>
-            AI Portfolio Assistant
-          </h2>
-          <div className="muted" style={{ fontWeight: 800 }}>
-            Ask about Sunny
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <h2 style={{ margin: 0, fontSize: "clamp(20px, 3.6vw, 30px)", fontWeight: 950 }}>
+              AI Portfolio Assistant
+            </h2>
+            <div className="muted" style={{ fontWeight: 800, marginTop: 4 }}>
+              Ask questions about Sunny (skills, projects, contact)
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <span
+              className="badge"
+              style={{
+                background: loading ? "rgba(34,197,94,0.18)" : "rgba(255,255,255,0.06)",
+                borderColor: "rgba(255,255,255,0.18)",
+              }}
+            >
+              {loading ? "Live AI: Thinking..." : "Live AI: Ready"}
+            </span>
+            <button
+              onClick={clearChat}
+              disabled={loading}
+              className="btn-ghost"
+              style={{ cursor: loading ? "not-allowed" : "pointer" }}
+            >
+              Clear
+            </button>
           </div>
         </div>
 
-        {/* Quick actions */}
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
-          <QuickBtn label="About" prompt="Tell me about Sunny Christian" />
-          <QuickBtn label="Skills" prompt="What are Sunny's skills?" />
-          <QuickBtn label="Projects" prompt="Show Sunny's projects" />
-          <QuickBtn label="Contact" prompt="How can I contact Sunny?" />
+        {/* Quick prompts */}
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+          {quickPrompts.map((q) => (
+            <button
+              key={q.label}
+              onClick={() => send(q.prompt)}
+              disabled={loading}
+              style={{
+                border: "1px solid rgba(255,255,255,0.18)",
+                background: "rgba(255,255,255,0.06)",
+                color: "white",
+                borderRadius: 999,
+                padding: "8px 12px",
+                fontWeight: 900,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+            >
+              {q.label}
+            </button>
+          ))}
         </div>
 
-        {/* Chat box */}
+        {/* Chat panel */}
         <div
+          ref={listRef}
           className="glass"
           style={{
             marginTop: 14,
             padding: 14,
-            minHeight: 360,
-            maxHeight: 520,
+            minHeight: 380,
+            maxHeight: 560,
             overflowY: "auto",
             background: "rgba(255,255,255,0.05)",
           }}
         >
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                justifyContent: m.role === "user" ? "flex-end" : "flex-start",
-                marginBottom: 10,
-              }}
-            >
-              <div
-                style={{
-                  maxWidth: "78%",
-                  padding: "10px 12px",
-                  borderRadius: 14,
-                  whiteSpace: "pre-wrap",
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  background:
-                    m.role === "user"
-                      ? "linear-gradient(135deg, rgba(124,58,237,0.90), rgba(124,58,237,0.55))"
-                      : "rgba(255,255,255,0.06)",
-                }}
-              >
-                {m.text}
-              </div>
-            </div>
+          {messages.map((m) => (
+            <Bubble key={m.id} m={m} />
           ))}
 
           {loading && (
-            <div className="muted" style={{ marginTop: 6, fontWeight: 800 }}>
-              🤖 Thinking...
+            <div className="muted" style={{ fontWeight: 900, marginTop: 4 }}>
+              🤖 Typing…
             </div>
           )}
         </div>
 
+        {/* Error */}
         {error && (
-          <div style={{ marginTop: 10, color: "#ffb4b4", fontWeight: 900 }}>
+          <div style={{ marginTop: 10, color: "#ffb4b4", fontWeight: 950 }}>
             {error}
           </div>
         )}
@@ -314,13 +279,13 @@ export default function Chatbot() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a question… (ex: What are Sunny’s skills?)"
+            placeholder="Ask something… (ex: What are Sunny’s skills?)"
             disabled={loading}
             style={{
               flex: 1,
               minWidth: 220,
               padding: "12px 12px",
-              borderRadius: 12,
+              borderRadius: 14,
               border: "1px solid rgba(255,255,255,0.18)",
               background: "rgba(0,0,0,0.20)",
               color: "white",
@@ -342,7 +307,7 @@ export default function Chatbot() {
         </div>
 
         <div className="muted" style={{ marginTop: 10, fontWeight: 800 }}>
-          Tip: Try the quick buttons first — it feels more like a real assistant.
+          Tip: This bot uses a secure server endpoint, so your API key stays private.
         </div>
       </div>
     </div>
